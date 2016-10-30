@@ -1,0 +1,41 @@
+---
+
+- name: install fprobe from packages
+  package: name={{ item }} state=present
+  with_items: "{{ fprobe_pkg }}"
+
+- name: Debian | update fprobe config
+  replace: "dest=/etc/default/fprobe regexp={{ item.re }} replace={{ item.rep }} backup=yes"
+  with_items:
+    - { re: '^INTERFACE=.*', rep: "INTERFACE=\"{{ fprobe_if }}\"" }
+    - { re: '^FLOW_COLLECTOR=.*', rep: "FLOW_COLLECTOR=\"{{ fprobe_flow_collector }}\"" }
+    - { re: '^OTHER_ARGS=.*', rep: "OTHER_ARGS=\"{{ fprobe_args }}\"" }
+  when: ansible_os_family == 'Debian'
+  notify:
+    - restart fprobe
+- name: RedHat | update fprobe config
+  lineinfile: "dest=/etc/sysconfig/fprobe regexp={{ item.re }} line={{ item.rep }} backup=yes create=yes"
+  with_items:
+    - { re: '^FLOW_COLLECTOR=.*', rep: "FLOW_COLLECTOR=\"{{ fprobe_flow_collector }}\"" }
+#    - { re: '^OTHER_ARGS=.*', rep: "OTHER_ARGS=\"{{ fprobe_args }}\"" }
+  when: ansible_os_family == 'RedHat'
+  notify:
+
+#- block:
+#    - name: RedHat | check if fprobe is running
+#      shell: "ps axu |grep fprobe-ulog"
+#      register: ps
+#      changed_when: false
+#    - name: RedHat | start fprobe manually
+#      command: "fprobe-ulog -c /var/tmp {{ fprobe_flow_collector }}"
+#  when: ansible_os_family == 'RedHat' and ps is defined and ps.stdout is defined and ps.stdout.find(" fprobe-ulog ") == -1
+
+- name: add init.d script
+  template: src=init.d-fprobe.j2 dest=/etc/rc.d/init.d/fprobe-ulog mode=0755
+  when: ansible_os_family == 'RedHat'
+
+- name: ensure service is enabled and started
+  service: name={{ fprobe_svc }} state=started enabled=yes
+## fail on trusty and centos7 but works in cli
+  ignore_errors: true
+

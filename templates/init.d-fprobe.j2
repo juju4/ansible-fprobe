@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+#       /etc/rc.d/init.d/fprobe-ulog
+#
+#       NetFlow probe
+# chkconfig: 2345 10 90
+# description: Netflow Probe
+# config: /etc/sysconfig/fprobe
+
+[ -f /etc/sysconfig/fprobe ] && . /etc/sysconfig/fprobe
+
+# Source function library. = redirect to systemd...
+#. /etc/init.d/functions
+
+
+start() {
+        echo -n "Starting fprobe-ulog: "
+        fprobe-ulog -c /var/tmp $FLOW_COLLECTOR
+        touch /var/lock/subsys/fprobe-ulog
+        echo.
+        return 0
+}
+
+stop() {
+        echo -n "Shutting down fprobe-ulog: "
+        pkill fprobe-ulog
+        rm -f /var/lock/subsys/fprobe-ulog
+        echo.
+        return 0
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        ps axu | egrep '[f]probe-ulog'
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: fprobe-ulog {start|stop|status|restart}"
+        exit 1
+        ;;
+esac
+exit $?
+

@@ -1,0 +1,6 @@
+---
+
+- name: restart fprobe
+  service: name={{ fprobe_svc }} state=restarted sleep=5
+  ignore_errors: true
+
