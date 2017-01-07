@@ -10,4 +10,10 @@ rolesdir=$(dirname $0)/..
 fi
 
 [ ! -d $rolesdir/juju4.redhat-epel ] && git clone https://github.com/juju4/ansible-redhat-epel $rolesdir/juju4.redhat-epel
+## galaxy naming: kitchen fails to transfer symlink folder
+#[ ! -e $rolesdir/juju4.fprobe ] && ln -s ansible-fprobe $rolesdir/juju4.fprobe
+[ ! -e $rolesdir/juju4.fprobe ] && cp -R $rolesdir/ansible-fprobe $rolesdir/juju4.fprobe
+
+## don't stop build on this script return code
+true
 

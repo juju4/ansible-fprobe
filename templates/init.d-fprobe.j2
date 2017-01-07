@@ -14,18 +14,19 @@
 
 
 start() {
-        echo -n "Starting fprobe-ulog: "
+        echo -n "Starting fprobe-ulog"
         fprobe-ulog -c /var/tmp $FLOW_COLLECTOR
         touch /var/lock/subsys/fprobe-ulog
-        echo.
+        echo .
+        ps axu | egrep '[f]probe-ulog'
         return 0
 }
 
 stop() {
-        echo -n "Shutting down fprobe-ulog: "
+        echo -n "Shutting down fprobe-ulog"
         pkill fprobe-ulog
         rm -f /var/lock/subsys/fprobe-ulog
-        echo.
+        echo .
         return 0
 }
 

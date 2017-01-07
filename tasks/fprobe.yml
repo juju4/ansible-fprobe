@@ -32,7 +32,10 @@
 
 - name: add init.d script
   template: src=init.d-fprobe.j2 dest=/etc/rc.d/init.d/fprobe-ulog mode=0755
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
+- name: add systemd script
+  template: "src=systemd-fprobe-ulog.service.j2 dest=/lib/systemd/system/{{ fprobe_svc }}.service mode=0644"
+  when: ansible_service_mgr == 'systemd'
 
 - name: ensure service is enabled and started
   service: name={{ fprobe_svc }} state=started enabled=yes
