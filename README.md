@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/juju4/ansible-fprobe.svg?branch=master)](https://travis-ci.org/juju4/ansible-fprobe)
+[![Build Status - Master](https://travis-ci.org/juju4/ansible-fprobe.svg?branch=master)](https://travis-ci.org/juju4/ansible-fprobe)
+[![Build Status - Devel](https://travis-ci.org/juju4/ansible-fprobe.svg?branch=devel)](https://travis-ci.org/juju4/ansible-fprobe/branches)
 # Fprobe ansible role
 
 Ansible role to setup fprobe as netflow exporter
@@ -10,6 +11,7 @@ http://fprobe.sourceforge.net/
 It was tested on the following versions:
  * 1.9
  * 2.0
+ * 2.2
 
 ### Operating systems
 
