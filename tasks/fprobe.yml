@@ -30,12 +30,46 @@
 #      command: "fprobe-ulog -c /var/tmp {{ fprobe_flow_collector }}"
 #  when: ansible_os_family == 'RedHat' and ps is defined and ps.stdout is defined and ps.stdout.find(" fprobe-ulog ") == -1
 
-- name: add init.d script
-  template: src=init.d-fprobe.j2 dest=/etc/rc.d/init.d/fprobe-ulog mode=0755
-  when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
-- name: add systemd script
-  template: "src=systemd-fprobe-ulog.service.j2 dest=/lib/systemd/system/{{ fprobe_svc }}.service mode=0644"
+- block:
+    - name: install fprobe systemd configuration
+      template:
+        src: "systemd-fprobe-ulog.service.j2"
+        dest: "/lib/systemd/system/{{ fprobe_svc }}.service"
+        mode: '0644'
+        backup: yes
+      register: systemdconf
+      ignore_errors: true
+    - block:
+        - include: "immutable.yml target_dir=/lib/systemd/system state=pre"
+        - name: install fprobe systemd configuration
+          template:
+            src: "systemd-fprobe-ulog.service.j2"
+            dest: "/lib/systemd/system/{{ fprobe_svc }}.service"
+            mode: '0644'
+            backup: yes
+        - include: "immutable.yml target_dir=/lib/systemd/system state=post"
+      when: systemdconf|failed
   when: ansible_service_mgr == 'systemd'
+- block:
+    - name: add fprobe init.d script
+      template:
+        src: init.d-fprobe.j2
+        dest: /etc/rc.d/init.d/fprobe-ulog
+        mode: '0755'
+        backup: yes
+      register: initdconf
+      ignore_errors: true
+    - block:
+        - include: "immutable.yml target_dir=/etc/rc.d/init.d state=pre"
+        - name: install fprobe systemd configuration
+          template:
+            src: init.d-fprobe.j2
+            dest: /etc/rc.d/init.d/fprobe-ulog
+            mode: '0755'
+            backup: yes
+        - include: "immutable.yml target_dir=/etc/rc.d/init.d state=post"
+      when: initdconf|failed
+  when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
 
 - name: ensure service is enabled and started
   service: name={{ fprobe_svc }} state=started enabled=yes
