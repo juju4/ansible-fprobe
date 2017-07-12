@@ -23,7 +23,7 @@ end
 #end
 
 describe service('fprobe'), :if => os[:family] == 'ubuntu' || os[:family] == 'debian' do
-  it { should be_enabled }
+#  it { should be_enabled }
   it { should be_running }
 end
 
