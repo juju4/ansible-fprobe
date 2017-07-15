@@ -76,3 +76,5 @@
 ## fail on trusty and centos7 but works in cli
   ignore_errors: true
 
+- name: ensure service is started - again
+  service: name={{ fprobe_svc }} state=started
