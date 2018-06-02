@@ -12,10 +12,11 @@ It was tested on the following versions:
  * 1.9
  * 2.0
  * 2.2
+ * 2.5
 
 ### Operating systems
 
-Ubuntu 14.04, 16.04 and Centos 7
+Ubuntu 14.04, 16.04, 18.04 and Centos 7
 
 ## Example Playbook
 

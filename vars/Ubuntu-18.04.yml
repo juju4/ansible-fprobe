@@ -1,0 +1,7 @@
+---
+
+fprobe_pkg:
+  - fprobe
+
+fprobe_svc: fprobe
+
