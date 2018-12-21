@@ -1,8 +1,9 @@
 ---
 
 - name: install fprobe from packages
-  package: name={{ item }} state=present
-  with_items: "{{ fprobe_pkg }}"
+  package: name={{ fprobe_pkg }} state=present
+  register: pkg_result
+  until: pkg_result is success
 
 - name: Debian | update fprobe config
   replace: "dest=/etc/default/fprobe regexp={{ item.re }} replace={{ item.rep }} backup=yes"
@@ -28,7 +29,9 @@
 #      changed_when: false
 #    - name: RedHat | start fprobe manually
 #      command: "fprobe-ulog -c /var/tmp {{ fprobe_flow_collector }}"
-#  when: ansible_os_family == 'RedHat' and ps is defined and ps.stdout is defined and ps.stdout.find(" fprobe-ulog ") == -1
+#  when: >
+#    ansible_os_family == 'RedHat' and ps is defined and ps.stdout is defined and
+#    ps.stdout.find(" fprobe-ulog ") == -1
 
 - block:
     - name: install fprobe systemd configuration

@@ -4,4 +4,3 @@ fprobe_pkg:
   - fprobe-ulog
 
 fprobe_svc: fprobe-ulog
-
