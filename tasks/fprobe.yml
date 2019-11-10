@@ -51,7 +51,7 @@
             mode: '0644'
             backup: yes
         - include: "immutable.yml target_dir=/lib/systemd/system state=post"
-      when: systemdconf|failed
+      when: systemdconf is failed
   when: ansible_service_mgr == 'systemd'
 - block:
     - name: add fprobe init.d script
@@ -71,7 +71,7 @@
             mode: '0755'
             backup: yes
         - include: "immutable.yml target_dir=/etc/rc.d/init.d state=post"
-      when: initdconf|failed
+      when: initdconf is failed
   when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
 
 - name: ensure service is enabled and started
