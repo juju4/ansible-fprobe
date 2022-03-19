@@ -2,7 +2,7 @@
 
 fprobe_if: 'eth0'
 fprobe_flow_collector: '127.0.0.1:9995'
-#fprobe_args: '-fip'
+# fprobe_args: '-fip'
 ## downgrade user and chroot to dir
-#fprobe_args: '-fip -u nobody -c /var/empty'  ## not working with user nobody or non-existing chrooted dir
+# fprobe_args: '-fip -u nobody -c /var/empty'  ## not working with user nobody or non-existing chrooted dir
 fprobe_args: '-fip -c /var/tmp'

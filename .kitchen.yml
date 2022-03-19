@@ -9,27 +9,27 @@ provisioner:
   name: ansible_playbook
   roles_path: ../
   hosts: all
-#  ansible_verbose: true
+  # ansible_verbose: true
   ansible_verbose: false
   ansible_verbosity: 3
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
   require_chef_omnibus: false
   require_ansible_omnibus: true
-#  require_chef_for_busser: false
+  # require_chef_for_busser: false
   enable_yum_epel: true
   ansible_connection: ssh
 
 platforms:
   - name: ubuntu-18.04
   - name: ubuntu-16.04
-## FIXME! test frozing/stalling on '-----> Running bats test suite' for trusty and precise???
-#  - name: ubuntu-14.04
-#  - name: ubuntu-12.04
+  ## FIXME! test frozing/stalling on '-----> Running bats test suite' for trusty and precise???
+  # - name: ubuntu-14.04
+  # - name: ubuntu-12.04
   - name: centos-7
-#  - name: centos-6
-## FIXME! 'Installing Chef Omnibus to install busser to run tests' not supported = can disable
-##	' sl = self._semlock = _multiprocessing.SemLock(kind, value, maxvalue)\nOSError: [Errno 2] No such file or directory'
-#  - name: alpine-3.4
+  # - name: centos-6
+  ## FIXME! 'Installing Chef Omnibus to install busser to run tests' not supported = can disable
+  ## ' sl = self._semlock = _multiprocessing.SemLock(kind, value, maxvalue)\nOSError: [Errno 2] No such file or directory'
+  # - name: alpine-3.4
 
 suites:
   - name: default

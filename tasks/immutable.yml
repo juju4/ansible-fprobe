@@ -8,26 +8,26 @@
   register: imm
 
 - block:
-## Ansible 2.3+ for get_attributes
+    ## Ansible 2.3+ for get_attributes
     - name: check target_dir {{ target_dir }} attributes
-#     stat:
-#       path: "{{ target_dir }}"
-#       get_attributes: yes
+      # stat:
+      #   path: "{{ target_dir }}"
+      #   get_attributes: yes
       command: "lsattr -d '{{ target_dir }}'"
       register: dir
       changed_when: false
-      ignore_errors: true
+      failed_when: false
 
     - name: Remove immutable attribute
       command: "chattr -i '{{ target_dir }}'"
-      ignore_errors: true
+      failed_when: false
       when: dir.stdout.find('-i-') != -1
   when: state == 'pre' and imm.stat.exists
 
 - name: Reestablish immutable attribute
   command: "chattr +i '{{ target_dir }}'"
-#  file:
-#    dest: "{{ target_dir }}"
-#    attributes: '----i-----I--e--'
+  # file:
+  #   dest: "{{ target_dir }}"
+  #   attributes: '----i-----I--e--'
   when: state == 'post' and imm.stat.exists
-  ignore_errors: true
+  failed_when: false

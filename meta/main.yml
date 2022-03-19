@@ -5,19 +5,18 @@ galaxy_info:
   license: BSD
   min_ansible_version: 2.0
   platforms:
-  - name: EL
-    versions:
-     - 6
-     - 7
-  - name: Ubuntu
-    versions:
-    - precise
-    - trusty
-    - xenial
-    - bionic
+    - name: EL
+      versions:
+        - 6
+        - 7
+    - name: Ubuntu
+      versions:
+        - precise
+        - trusty
+        - xenial
+        - bionic
   galaxy_tags:
-  - system
-  - security
-#dependencies: []
+    - system
+    - security
 dependencies:
   - juju4.redhat_epel
