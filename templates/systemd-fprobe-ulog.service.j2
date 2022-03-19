@@ -2,7 +2,7 @@
 [Unit]
 Description=fprobe netflow collector
 Requires=network.target
- 
+
 [Service]
 Type=simple
 {% if ansible_os_family == 'RedHat' %}
@@ -13,6 +13,6 @@ ExecStart=/usr/sbin/fprobe -i{{ fprobe_if }} {{ fprobe_args }} {{ fprobe_flow_co
 TimeoutSec=30
 RestartSec=15s
 Restart=always
- 
+
 [Install]
 WantedBy=multi-user.target
