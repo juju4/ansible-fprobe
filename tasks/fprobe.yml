@@ -1,12 +1,12 @@
 ---
 
 - name: install fprobe from packages
-  package: name={{ fprobe_pkg }} state=present
+  ansible.builtin.package: name={{ fprobe_pkg }} state=present
   register: pkg_result
   until: pkg_result is success
 
 - name: Debian | update fprobe config
-  replace: "dest=/etc/default/fprobe regexp={{ item.re }} replace={{ item.rep }} backup=yes"
+  ansible.builtin.replace: "dest=/etc/default/fprobe regexp={{ item.re }} replace={{ item.rep }} backup=yes"
   with_items:
     - { re: '^INTERFACE=.*', rep: "INTERFACE=\"{{ fprobe_if }}\"" }
     - { re: '^FLOW_COLLECTOR=.*', rep: "FLOW_COLLECTOR=\"{{ fprobe_flow_collector }}\"" }
@@ -15,7 +15,7 @@
   notify:
     - restart fprobe
 - name: RedHat | update fprobe config
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sysconfig/fprobe
     regexp: "{{ item.re }}"
     line: "{{ item.rep }}"
@@ -30,11 +30,11 @@
 
 # - block:
 #     - name: RedHat | check if fprobe is running
-#       shell: "ps axu |grep fprobe-ulog"
+#       ansible.builtin.shell: "ps axu |grep fprobe-ulog"
 #       register: ps
 #       changed_when: false
 #     - name: RedHat | start fprobe manually
-#       command: "fprobe-ulog -c /var/tmp {{ fprobe_flow_collector }}"
+#       ansible.builtin.command: "fprobe-ulog -c /var/tmp {{ fprobe_flow_collector }}"
 #   when: >
 #     ansible_os_family == 'RedHat' and ps is defined and ps.stdout is defined and
 #     ps.stdout.find(" fprobe-ulog ") == -1
@@ -42,7 +42,7 @@
 - block:
     - block:
         - name: install fprobe systemd configuration
-          template:
+          ansible.builtin.template:
             src: "systemd-fprobe-ulog.service.j2"
             dest: "/lib/systemd/system/{{ fprobe_svc }}.service"
             mode: '0644'
@@ -51,7 +51,7 @@
       rescue:
         - include: "immutable.yml target_dir=/lib/systemd/system state=pre"
         - name: install fprobe systemd configuration
-          template:
+          ansible.builtin.template:
             src: "systemd-fprobe-ulog.service.j2"
             dest: "/lib/systemd/system/{{ fprobe_svc }}.service"
             mode: '0644'
@@ -61,7 +61,7 @@
 - block:
     - block:
         - name: add fprobe init.d script
-          template:
+          ansible.builtin.template:
             src: init.d-fprobe.j2
             dest: /etc/rc.d/init.d/fprobe-ulog
             mode: '0755'
@@ -70,7 +70,7 @@
       rescue:
         - include: "immutable.yml target_dir=/etc/rc.d/init.d state=pre"
         - name: install fprobe systemd configuration
-          template:
+          ansible.builtin.template:
             src: init.d-fprobe.j2
             dest: /etc/rc.d/init.d/fprobe-ulog
             mode: '0755'
@@ -79,9 +79,9 @@
   when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
 
 - name: ensure service is enabled and started
-  service: name={{ fprobe_svc }} state=started enabled=yes
+  ansible.builtin.service: name={{ fprobe_svc }} state=started enabled=yes
   ## fail on trusty and centos7 but works in cli
   failed_when: false
 
 - name: ensure service is started - again
-  service: name={{ fprobe_svc }} state=started
+  ansible.builtin.service: name={{ fprobe_svc }} state=started
