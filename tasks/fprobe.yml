@@ -39,8 +39,10 @@
 #     ansible_os_family == 'RedHat' and ps is defined and ps.stdout is defined and
 #     ps.stdout.find(" fprobe-ulog ") == -1
 
-- block:
-    - block:
+- name: Systemd service manager
+  block:
+    - name: Service unit
+      block:
         - name: install fprobe systemd configuration
           ansible.builtin.template:
             src: "systemd-fprobe-ulog.service.j2"
@@ -58,8 +60,10 @@
             backup: yes
         - include: "immutable.yml target_dir=/lib/systemd/system state=post"
   when: ansible_service_mgr == 'systemd'
-- block:
-    - block:
+- name: Init.d service manager
+  block:
+    - name: Init.d file
+      block:
         - name: add fprobe init.d script
           ansible.builtin.template:
             src: init.d-fprobe.j2
