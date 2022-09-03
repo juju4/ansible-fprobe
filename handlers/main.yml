@@ -1,5 +1,5 @@
 ---
 
-- name: restart fprobe
+- name: Restart fprobe
   ansible.builtin.service: name={{ fprobe_svc }} state=restarted sleep=5
   failed_when: false

@@ -1,6 +1,6 @@
 ---
 
-- name: install fprobe from packages
+- name: Install fprobe from packages
   ansible.builtin.package: name={{ fprobe_pkg }} state=present
   register: pkg_result
   until: pkg_result is success
@@ -13,7 +13,7 @@
     - { re: '^OTHER_ARGS=.*', rep: "OTHER_ARGS=\"{{ fprobe_args }}\"" }
   when: ansible_os_family == 'Debian'
   notify:
-    - restart fprobe
+    - Restart fprobe
 - name: RedHat | update fprobe config
   ansible.builtin.lineinfile:
     dest: /etc/sysconfig/fprobe
@@ -43,7 +43,7 @@
   block:
     - name: Service unit
       block:
-        - name: install fprobe systemd configuration
+        - name: Install fprobe systemd configuration
           ansible.builtin.template:
             src: "systemd-fprobe-ulog.service.j2"
             dest: "/lib/systemd/system/{{ fprobe_svc }}.service"
@@ -52,7 +52,7 @@
           register: systemdconf
       rescue:
         - include: "immutable.yml target_dir=/lib/systemd/system state=pre"
-        - name: install fprobe systemd configuration
+        - name: Install fprobe systemd configuration
           ansible.builtin.template:
             src: "systemd-fprobe-ulog.service.j2"
             dest: "/lib/systemd/system/{{ fprobe_svc }}.service"
@@ -64,7 +64,7 @@
   block:
     - name: Init.d file
       block:
-        - name: add fprobe init.d script
+        - name: Add fprobe init.d script
           ansible.builtin.template:
             src: init.d-fprobe.j2
             dest: /etc/rc.d/init.d/fprobe-ulog
@@ -73,7 +73,7 @@
           register: initdconf
       rescue:
         - include: "immutable.yml target_dir=/etc/rc.d/init.d state=pre"
-        - name: install fprobe systemd configuration
+        - name: Install fprobe systemd configuration
           ansible.builtin.template:
             src: init.d-fprobe.j2
             dest: /etc/rc.d/init.d/fprobe-ulog
@@ -82,8 +82,8 @@
         - include: "immutable.yml target_dir=/etc/rc.d/init.d state=post"
   when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
 
-- name: ensure service is enabled and started
+- name: Ensure service is enabled and started
   ansible.builtin.service: name={{ fprobe_svc }} state=started enabled=yes
 
-- name: ensure service is started - again
+- name: Ensure service is started - again
   ansible.builtin.service: name={{ fprobe_svc }} state=started
