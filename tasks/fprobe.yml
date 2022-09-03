@@ -84,8 +84,6 @@
 
 - name: ensure service is enabled and started
   ansible.builtin.service: name={{ fprobe_svc }} state=started enabled=yes
-  ## fail on trusty and centos7 but works in cli
-  failed_when: false
 
 - name: ensure service is started - again
   ansible.builtin.service: name={{ fprobe_svc }} state=started
