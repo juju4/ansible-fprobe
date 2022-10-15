@@ -8,9 +8,10 @@
   register: imm
 
 - name: Pre
+  when: state == 'pre' and imm.stat.exists
   block:
     ## Ansible 2.3+ for get_attributes
-    - name: Check target_dir {{ target_dir }} attributes
+    - name: Check target_dir attributes - {{ target_dir }}
       # stat:
       #   path: "{{ target_dir }}"
       #   get_attributes: yes
@@ -23,7 +24,6 @@
       ansible.builtin.command: "chattr -i '{{ target_dir }}'"
       failed_when: false
       when: dir.stdout.find('-i-') != -1
-  when: state == 'pre' and imm.stat.exists
 
 - name: Reestablish immutable attribute
   ansible.builtin.command: "chattr +i '{{ target_dir }}'"

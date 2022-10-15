@@ -16,4 +16,5 @@
 # - include: redhat.yml
 #   when: ansible_os_family == "RedHat"
 
-- include: fprobe.yml
+- name: Import fprobe
+  ansible.builtin.import_tasks: fprobe.yml

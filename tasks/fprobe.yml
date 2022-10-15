@@ -1,12 +1,18 @@
 ---
 
 - name: Install fprobe from packages
-  ansible.builtin.package: name={{ fprobe_pkg }} state=present
+  ansible.builtin.package:
+    name: "{{ fprobe_pkg }}"
+    state: "present"
   register: pkg_result
   until: pkg_result is success
 
 - name: Debian | update fprobe config
-  ansible.builtin.replace: "dest=/etc/default/fprobe regexp={{ item.re }} replace={{ item.rep }} backup=yes"
+  ansible.builtin.replace:
+    dest: "/etc/default/fprobe"
+    regexp: "{{ item.re }}"
+    replace: "{{ item.rep }}"
+    backup: "yes"
   with_items:
     - { re: '^INTERFACE=.*', rep: "INTERFACE=\"{{ fprobe_if }}\"" }
     - { re: '^FLOW_COLLECTOR=.*', rep: "FLOW_COLLECTOR=\"{{ fprobe_flow_collector }}\"" }
@@ -40,6 +46,7 @@
 #     ps.stdout.find(" fprobe-ulog ") == -1
 
 - name: Systemd service manager
+  when: ansible_service_mgr == 'systemd'
   block:
     - name: Service unit
       block:
@@ -51,16 +58,24 @@
             backup: yes
           register: systemdconf
       rescue:
-        - include: "immutable.yml target_dir=/lib/systemd/system state=pre"
+        - name: Include immutable
+          ansible.builtin.include_tasks: immutable.yml
+          vars:
+            target_dir: /lib/systemd/system
+            state: pre
         - name: Install fprobe systemd configuration
           ansible.builtin.template:
             src: "systemd-fprobe-ulog.service.j2"
             dest: "/lib/systemd/system/{{ fprobe_svc }}.service"
             mode: '0644'
             backup: yes
-        - include: "immutable.yml target_dir=/lib/systemd/system state=post"
-  when: ansible_service_mgr == 'systemd'
+        - name: Include immutable
+          ansible.builtin.include_tasks: immutable.yml
+          vars:
+            target_dir: /lib/systemd/system
+            state: post
 - name: Init.d service manager
+  when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
   block:
     - name: Init.d file
       block:
@@ -72,18 +87,30 @@
             backup: yes
           register: initdconf
       rescue:
-        - include: "immutable.yml target_dir=/etc/rc.d/init.d state=pre"
+        - name: Include immutable
+          ansible.builtin.include_tasks: immutable.yml
+          vars:
+            target_dir: /etc/rc.d/init.d
+            state: pre
         - name: Install fprobe systemd configuration
           ansible.builtin.template:
             src: init.d-fprobe.j2
             dest: /etc/rc.d/init.d/fprobe-ulog
             mode: '0755'
             backup: yes
-        - include: "immutable.yml target_dir=/etc/rc.d/init.d state=post"
-  when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
+        - name: Include immutable
+          ansible.builtin.include_tasks: immutable.yml
+          vars:
+            target_dir: /etc/rc.d/init.d
+            state: post
 
 - name: Ensure service is enabled and started
-  ansible.builtin.service: name={{ fprobe_svc }} state=started enabled=yes
+  ansible.builtin.service:
+    name: "{{ fprobe_svc }}"
+    state: "started"
+    enabled: "yes"
 
 - name: Ensure service is started - again
-  ansible.builtin.service: name={{ fprobe_svc }} state=started
+  ansible.builtin.service:
+    name: "{{ fprobe_svc }}"
+    state: "started"
