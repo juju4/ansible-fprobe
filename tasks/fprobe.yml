@@ -33,6 +33,7 @@
     # - { re: '^OTHER_ARGS=.*', rep: "OTHER_ARGS=\"{{ fprobe_args }}\"" }
   when: ansible_os_family == 'RedHat'
   notify:
+    - Restart fprobe
 
 # - block:
 #     - name: RedHat | check if fprobe is running
