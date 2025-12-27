@@ -17,7 +17,7 @@
     - { re: '^INTERFACE=.*', rep: "INTERFACE=\"{{ fprobe_if }}\"" }
     - { re: '^FLOW_COLLECTOR=.*', rep: "FLOW_COLLECTOR=\"{{ fprobe_flow_collector }}\"" }
     - { re: '^OTHER_ARGS=.*', rep: "OTHER_ARGS=\"{{ fprobe_args }}\"" }
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
   notify:
     - Restart fprobe
 - name: RedHat | update fprobe config
@@ -31,7 +31,7 @@
   with_items:
     - { re: '^FLOW_COLLECTOR=.*', rep: "FLOW_COLLECTOR=\"{{ fprobe_flow_collector }}\"" }
     # - { re: '^OTHER_ARGS=.*', rep: "OTHER_ARGS=\"{{ fprobe_args }}\"" }
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts['os_family'] == 'RedHat'
   notify:
     - Restart fprobe
 
@@ -43,11 +43,11 @@
 #     - name: RedHat | start fprobe manually
 #       ansible.builtin.command: "fprobe-ulog -c /var/tmp {{ fprobe_flow_collector }}"
 #   when: >
-#     ansible_os_family == 'RedHat' and ps is defined and ps.stdout is defined and
+#     ansible_facts['os_family'] == 'RedHat' and ps is defined and ps.stdout is defined and
 #     ps.stdout.find(" fprobe-ulog ") == -1
 
 - name: Systemd service manager
-  when: ansible_service_mgr == 'systemd'
+  when: ansible_facts['service_mgr'] == 'systemd'
   block:
     - name: Service unit
       block:
@@ -76,7 +76,7 @@
             target_dir: /lib/systemd/system
             state: post
 - name: Init.d service manager
-  when: ansible_os_family == 'RedHat' and ansible_service_mgr != 'systemd'
+  when: ansible_facts['os_family'] == 'RedHat' and ansible_facts['service_mgr'] != 'systemd'
   block:
     - name: Init.d file
       block:

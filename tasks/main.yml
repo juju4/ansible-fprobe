@@ -1,20 +1,20 @@
 ---
 
 # - fail: msg="This role is only compatible with Ubuntu"
-#   when: ansible_distribution != 'Ubuntu'
+#   when: ansible_facts['distribution'] != 'Ubuntu'
 
 - name: Include version-specific variables for Ubuntu.
-  ansible.builtin.include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
-  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.include_vars: "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_version'] }}.yml"
+  when: ansible_facts['distribution'] == 'Ubuntu'
 - name: Include version-specific variables for RedHat
-  ansible.builtin.include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
-  when: ansible_os_family == "RedHat"
+  ansible.builtin.include_vars: "RedHat-{{ ansible_facts['distribution_version.split('.''])[0] }}.yml"
+  when: ansible_facts['os_family'] == "RedHat"
 
 # - include: debian.yml
-#   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+#   when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 # - include: redhat.yml
-#   when: ansible_os_family == "RedHat"
+#   when: ansible_facts['os_family'] == "RedHat"
 
 - name: Import fprobe
   ansible.builtin.import_tasks: fprobe.yml
